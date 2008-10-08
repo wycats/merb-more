@@ -1,11 +1,10 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
-Merb::Router.prepare do
-  default_routes
-end
-
 describe Merb::Helpers::Tag do
   include Merb::Helpers::Tag
+
+  before(:each) do
+  end
   
   describe "#tag" do
     it 'generates <div>content</div> from tag :div, "content"' do

@@ -241,17 +241,17 @@ describe "text_field" do
 
   it "should return a basic text field based on the values passed in" do
     r = @c.render :basic
-    r.should match_tag( :input, :type => "text", :name => "foo", :value => "bar")
+    r.should match_tag( :input, :type => "text", :name => "first_name", :value => "Michael")
   end
 
   it "should provide an additional label tag if the :label option is passed in" do
     r = @c.render :basic
-    r.should match(/<label>LABEL<\/label>/)
+    r.should match(/<label>Name<\/label>/)
   end
 
   it "should update an existing :class with a new class" do
     r = @c.render :class
-    r.should == "<input type=\"text\" class=\"awesome foobar text\"/>"
+    r.should == "<input type=\"text\" class=\"notice text\"/>"
   end
   
   it "should be disabled if :disabled => true is passed in" do

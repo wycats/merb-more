@@ -14,6 +14,7 @@ default_options = {:environment => 'test', :adapter => 'runner'}.merge({:merb_ro
 options = default_options.merge($START_OPTIONS || {})
 Merb.start_environment(options)
 
+
 def unload_merb_helpers
   Merb.class_eval do
     remove_const("Helpers") if defined?(Merb::Helpers)
