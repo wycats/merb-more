@@ -19,15 +19,16 @@ require File.dirname(__FILE__) + '/spec_helper'
 #
 # Note that we are sending a real request to the controller, feel free to use the request as needed
 #
-# You might need to access real objects in your views
-# you can do that by setting them up in the controller
-#
-#    @obj = FakeModel.new # FaKeModel is defined in spec/fixture/models/first_generic_fake_model.rb check it out!
-#    @controller.instance_variable_set(:@obj, @obj)
+# You might need to access real objects in your views.
+# Use fixture application under spec/fixture and add models to...
+# you guessed it, app/models. We use DataMapper with in memory
+# SQLite database.
 # 
-# To test a helper, you need to render a view:
+# To test a helper, you need to add a controller action and
+# use it as you would in your application. Default routes
+# help.
 #
-#    result = @controller.render :view_name
+#    result = get("/custom_helper_specs/view_name")
 #
 # Of course, you need to create a view:
 #    spec/fixture/app/views/custom_helper_specs/view_name.html.erb
@@ -38,69 +39,6 @@ require File.dirname(__FILE__) + '/spec_helper'
 #
 
 
-Merb::Plugins.config[:helpers] = {
-  :default_builder => Merb::Helpers::Form::Builder::FormWithErrors
-}
-
-Merb::Router.append do
-  resources :obj
-end
-
-
-describe "error_messages_for" do
-
-  before :each do
-    @c = Application.new({})
-    @dm_obj = Object.new
-    @sq_obj = Object.new
-    @dm_errors = [["foo", "bar"],["baz","bat"]]
-    @sq_errors = Object.new
-    @sq_errors.stub!(:full_messages).and_return(["foo", "baz"])
-    @dm_obj.stub!(:errors).and_return(@dm_errors)
-    @dm_obj.stub!(:new_record?).and_return(false)
-    @sq_obj.stub!(:errors).and_return(@sq_errors)
-    @sq_obj.stub!(:new_record?).and_return(false)
-  end
-
-  it "should build default error messages for AR-like models" do
-    errs = @c.error_messages_for(@dm_obj)
-    errs.should include("<h2>Form submission failed because of 2 problems</h2>")
-    errs.should include("<li>foo bar</li>")
-    errs.should include("<li>baz bat</li>")
-  end
-
-  it "should build default error messages for Sequel-like models" do
-    errs = @c.error_messages_for(@sq_obj)
-    errs.should include("<h2>Form submission failed because of 2 problems</h2>")
-    errs.should include("<li>foo</li>")
-    errs.should include("<li>baz</li>")
-  end
-
-  # it "should build default error messages for symbol" do
-  #   errs = error_messages_for(:obj)
-  #   errs.should include("<h2>Form submittal failed because of 2 problems</h2>")
-  #   errs.should include("<li>foo bar</li>")
-  #   errs.should include("<li>baz bat</li>")
-  # end
-
-  it "should accept a custom HTML class" do
-    errs = @c.error_messages_for(@dm_obj, :error_class => "foo")
-    errs.should include("<div class='foo'>")
-  end
-  
-  it "should accept a custom header block" do
-    errs = @c.error_messages_for(@dm_obj, :header => "<h3>Failure: %s issue%s</h3>")
-    errs.should include("<h3>Failure: 2 issues</h3>")
-  end
-  
-#  it "should put the error messages inside a form if :before is false" do
-#    ret = @c.form_for @dm_obj do
-#      _buffer << error_messages
-#    end
-#    ret.should =~ /\A\s*<form.*<div class='error'>/    
-#  end
-
-end
 
 describe "form" do
 

@@ -23,5 +23,9 @@ end
 dependency File.join(File.dirname(__FILE__),'..','..','..','lib','merb-helpers')
 
 Merb::BootLoader.after_app_loads do
+  Merb::Plugins.config[:helpers] = {
+    :default_builder => Merb::Helpers::Form::Builder::FormWithErrors
+  }
+
   DataMapper.auto_migrate!
 end
