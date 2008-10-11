@@ -6,6 +6,10 @@ module Merb
       # that inherits from this.
       first_argument :name, :required => true
       
+      def initialize(*args)
+        super
+      end
+      
       def class_name
         name.gsub('-', '_').camel_case
       end

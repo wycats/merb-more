@@ -10,10 +10,6 @@ module Merb::Helpers::Form::Builder
       @name = name || @obj.class.name.snake_case.split("/").last
     end
 
-    def concat(attrs, &blk)
-      @origin.concat(@origin.capture(&blk), blk.binding)
-    end
-
     def form(attrs = {}, &blk)
       captured = @origin.capture(&blk)
       fake_method_tag = process_form_attrs(attrs)
@@ -31,7 +27,10 @@ module Merb::Helpers::Form::Builder
         def bound_#{kind}_field(method, attrs = {})
           name = control_name(method)
           update_bound_controls(method, attrs, "#{kind}")
-          unbound_#{kind}_field({:name => name, :value => @obj.send(method)}.merge(attrs))
+          unbound_#{kind}_field({
+            :name => name, 
+            :value => control_value(method)
+          }.merge(attrs))
         end
 
         def unbound_#{kind}_field(attrs)
@@ -61,7 +60,7 @@ module Merb::Helpers::Form::Builder
     def bound_radio_button(method, attrs = {})
       name = control_name(method)
       update_bound_controls(method, attrs, "radio")
-      unbound_radio_button({:name => name, :value => @obj.send(method)}.merge(attrs))
+      unbound_radio_button({:name => name, :value => control_value(method)}.merge(attrs))
     end
 
     def unbound_radio_button(attrs)
@@ -70,7 +69,7 @@ module Merb::Helpers::Form::Builder
     end
 
     def bound_radio_group(method, arr)
-      val = @obj.send(method)
+      val = control_value(method)
       arr.map do |attrs|
         attrs = {:value => attrs} unless attrs.is_a?(Hash)
         attrs[:checked] ||= (val == attrs[:value])
@@ -102,7 +101,7 @@ module Merb::Helpers::Form::Builder
     def bound_text_area(method, attrs = {})
       name = "#{@name}[#{method}]"
       update_bound_controls(method, attrs, "text_area")
-      unbound_text_area(@obj.send(method), {:name => name}.merge(attrs))
+      unbound_text_area(control_value(method), {:name => name}.merge(attrs))
     end
 
     def unbound_text_area(contents, attrs)
@@ -158,14 +157,14 @@ module Merb::Helpers::Form::Builder
 
       attrs[:boolean] = attrs.fetch(:boolean, true)
 
-      val = @obj.send(method)
+      val = control_value(method)
       attrs[:checked] = attrs.key?(:on) ? val == attrs[:on] : considered_true?(val)
     end
 
     def update_bound_select(method, attrs)
       attrs[:value_method] ||= method
       attrs[:text_method] ||= attrs[:value_method] || :to_s
-      attrs[:selected] ||= @obj.send(attrs[:value_method])
+      attrs[:selected] ||= control_value(attrs[:value_method])
     end
 
     def update_unbound_controls(attrs, type)
@@ -268,7 +267,11 @@ module Merb::Helpers::Form::Builder
     end
 
     def control_name(method)
-      "#{@name}[#{method}]"
+      @obj ? "#{@name}[#{method}]" : method
+    end
+    
+    def control_value(method)
+      @obj ? @obj.send(method) : @origin.params[method]
     end
 
     def add_css_class(attrs, new_class)
@@ -378,7 +381,7 @@ module Merb::Helpers::Form::Builder
     private
 
     def update_bound_controls(method, attrs, type)
-      if @obj.errors.on(method.to_sym)
+      if @obj && !@obj.errors.on(method.to_sym).blank?
         add_css_class(attrs, "error")
       end
       super
