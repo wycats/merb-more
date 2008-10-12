@@ -2,6 +2,8 @@ require File.dirname(__FILE__) + '/spec_helper'
 
 slices_path = File.dirname(__FILE__) / 'slices'
 
+Merb.disable(:initfile)
+
 describe Merb::Generators::FullSliceGenerator do
   
   describe "templates" do
