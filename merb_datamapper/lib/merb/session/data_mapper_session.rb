@@ -7,7 +7,7 @@ module Merb
     table_name = Merb::Plugins.config[:merb_datamapper][:session_storage_name] || 'sessions'
     storage_names[default_repository_name] = table_name
 
-    property :session_id, String, :size => 32, :nullable => false, :key => true
+    property :session_id, String, :size => 64, :nullable => false, :key => true
     property :data, Object, :default => {}, :lazy => false
     property :created_at, DateTime, :default => Proc.new { |r, p| DateTime.now }
 
