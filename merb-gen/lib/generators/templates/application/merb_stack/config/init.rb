@@ -13,6 +13,10 @@ Merb::Config.use do |c|
   # cookie session store configuration
   c[:session_secret_key]  = '1205346b9baa87cf8e49f78124c8d17a31ac0971'  # required for cookie session store
   # c[:session_id_key] = '_session_id' # cookie session id key, defaults to "_session_id"
+
+  # If you want session to expire when
+  # browser quits, comment this line out.
+  c[:session_expiry] = Merb::Const::WEEK * 2
 end
  
 Merb::BootLoader.before_app_loads do

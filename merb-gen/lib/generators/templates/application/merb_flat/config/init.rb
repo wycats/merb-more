@@ -125,18 +125,21 @@ Merb::Router.prepare do
 end
 
 Merb::Config.use { |c|
-  c[:environment]         = 'production',
-  c[:framework]           = {},
-  c[:log_level]           = :debug,
-  c[:log_stream]          = STDOUT,
+  c[:environment]         = 'production'
+  c[:framework]           = {}
+  c[:log_level]           = :debug
+  c[:log_stream]          = STDOUT
   # or use file for loggine:
-  # c[:log_file]          = Merb.root / "log" / "merb.log",
-  c[:use_mutex]           = false,
-  c[:session_store]       = 'cookie',
-  c[:session_id_key]      = '_session_id',
-  c[:session_secret_key]  = '<%= SHA1.new(rand(100000000000).to_s).to_s %>',
-  c[:exception_details]   = true,
-  c[:reload_classes]      = true,
-  c[:reload_templates]    = true,
+  # c[:log_file]          = Merb.root / "log" / "merb.log"
+  c[:use_mutex]           = false
+  c[:session_store]       = 'cookie'
+  c[:session_id_key]      = '_session_id'
+  c[:session_secret_key]  = '<%= SHA1.new(rand(100000000000).to_s).to_s %>'
+  # If you want session to expire when
+  # browser quits, comment this line out.
+  c[:session_expiry] = Merb::Const::WEEK * 2
+  c[:exception_details]   = true
+  c[:reload_classes]      = true
+  c[:reload_templates]    = true
   c[:reload_time]         = 0.5
 }

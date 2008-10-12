@@ -144,6 +144,10 @@ Merb::Config.use do |c|
   # You can of course use your favorite ORM instead: 
   # 'datamapper', 'sequel' or 'activerecord'.
   c[:session_store] = 'cookie'
+
+  # If you want session to expire when
+  # browser quits, comment this line out.
+  c[:session_expiry] = Merb::Const::WEEK * 2
 end
 
 
